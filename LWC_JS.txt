@@ -1,0 +1,158 @@
+﻿LWC.JS:
+import { LightningElement, track, api, wire } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { NavigationMixin } from 'lightning/navigation';
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import { createRecord } from 'lightning/uiRecordApi';
+// Importing Apex Class method
+//import saveRecord from '@salesforce/apex/RecordClass.saveRecord';
+ import Kloudone_object from '@salesforce/schema/Kloudone__c';
+ import Name_Field from '@salesforce/schema/Kloudone__c.Project_Name__c';
+ import Priority_Field from '@salesforce/schema/Kloudone__c.Priority__c';
+ import OwnerId_field from '@salesforce/schema/Kloudone__c.OwnerId';
+ import Status_field from '@salesforce/schema/Kloudone__c.Status__c';
+ import Type_field from '@salesforce/schema/Kloudone__c.Project_Type__c';
+ import EndDate_Field from '@salesforce/schema/Kloudone__c.End_Date__c';
+ import Description_Field from '@salesforce/schema/Kloudone__c.Description__c';
+ 
+export default class CreateRecordInLWC extends NavigationMixin(LightningElement)
+{
+    @track ismodalOpen = false;
+    openModal()
+    {
+        this.ismodalOpen = true;
+    }
+  handleCancel()
+  {
+      this.ismodalOpen = false;
+  }
+    /**
+        @api myRecordId;
+        @track error;
+        @track ProjectName;
+        @track ProjectType;
+        @track status;
+        @track EndDate;
+        @track Priority;
+        @track Desc;
+        @track recordid;
+ 
+@track Typeoptions = [
+    { label: 'Service', value: 'service' },
+    { label: 'Sales', value: 'Sales' },
+    { label: 'Marketing', value: 'Marketing' },
+    ];
+ 
+ 
+@track OwnerOptions = [
+    { label: 'Admin', value: 'Admin' },
+    ];
+ 
+ 
+@track Statusoptions = [
+    { label: 'Complete', value: 'Complete' },
+    { label: 'In Progress', value: 'In Progress' },
+    { label: 'Pending', value: 'Pending' },
+    { label: 'Cancel', value: 'Cancel' },
+    ];
+ 
+ 
+@track Priorityoptions = [
+    { label: 'Hot', value: 'Hot' },
+    { label: 'Warm', value: 'Warm' },
+    { label: 'Cold', value: 'Cold' },
+    ];
+ 
+handleTypeChange(event) {
+    this.ProjectType = event.detail.value;
+    //window.console.log('ProjectType ==> '+this.accRecord.ProjectType);
+    }
+handleOwnerChange(event) {
+    this.value = event.detail.value;
+    //window.console.log('Owner ==> '+this.value);
+    }
+handleStatusChange(event) {
+    this.status = event.detail.value;
+    //window.console.log('status ==> '+this.accRecord.status);
+    }
+handlePriorityChange(event) {
+    this.Priority = event.detail.value;
+    //window.console.log('Priority ==> '+this.accRecord.Priority);
+    }
+ 
+handleNameChange(event) {
+    this.ProjectName = event.target.value;
+    //window.console.log('Name ==> '+this.accRecord.ProjectName);
+    }
+ 
+handleEndDateChange(event) {
+    this.EndDate = event.target.value;
+    //window.console.log('EndDate ==> '+this.accRecord.EndDate);
+    }
+ 
+handleDescChange(event) {
+    this.Desc = event.target.value;
+    //window.console.log('Desc ==> '+this.accRecord.Desc);
+    }
+ 
+ 
+SaveProject() {
+    saveRecord({name:this.ProjectName,type: this.ProjectType,status: this.status,endDate: this.EndDate,priority: this.Priority,description: this.Desc})
+        .then(result => {
+            this.recordid=result.Id;
+            window.console.log('after save' + this.recordid);
+            window.console.log('result ===> '+result);
+            // Show success messsage
+        this.dispatchEvent(new ShowToastEvent({
+            title: 'Success!!',
+            message: 'Record Created Successfully!!',
+            variant: 'success'
+        }),);
+    })
+        .catch(error => {
+            this.error = error.message;
+    });
+    }
+    handleCancel() {
+   
+
+
+ }  
+handleSaveNew() {
+ this.SaveProject();
+ 
+    }
+    */
+SaveProject(){
+    this.template.querySelector('lightning-record-edit-form').submit(this.inputFields);
+    this.ismodalOpen = false;
+ }
+ handleSaveNew(){
+    this.template.querySelector('lightning-record-edit-form').submit(this.inputFields);
+    const inputFields = this.template.querySelectorAll('lightning-input-field');
+    if(inputFields){
+        inputFields.forEach(field => {
+            field.reset();
+        });
+    }
+   
+ }
+ handleonSuccess() {
+     const toastEvent = new ShowToastEvent({
+         title: 'Success!',
+         message: `Project Was Successfully createed`,
+         Variant: 'success'
+     });
+     this.dispatchEvent(toastEvent);
+ }
+get acceptedFormats() {
+    return ['.pdf', '.png'];
+}
+
+
+handleUploadFinished(event) {
+    // Get the list of uploaded files
+    const uploadedFiles = event.detail.files;
+    alert('No. of files uploaded : ' + uploadedFiles.length);
+}
+}
